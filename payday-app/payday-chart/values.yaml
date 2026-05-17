@@ -1,0 +1,13 @@
+# Master Control Panel Values for Payday Platform
+
+frontend:
+  image: "nginx:alpine"
+
+api:
+  image: "python:3.9-slim"
+
+worker:
+  image: "python:3.9-slim"
+
+postgresql:
+  image: "postgres:15-alpine"

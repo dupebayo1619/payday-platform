@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payday-api
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payday-api
+  template:
+    metadata:
+      labels:
+        app: payday-api
+    spec:
+      containers:
+      - name: api
+        image: {{ .Values.api.image }}
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "payday-postgres-service"
+        - name: DB_PASSWORD
+          value: "vault_secret_pass"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payday-api-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5000
+    targetPort: 5000
+  selector:
+    app: payday-api

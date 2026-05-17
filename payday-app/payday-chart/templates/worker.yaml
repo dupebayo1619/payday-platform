@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payday-worker
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payday-worker
+  template:
+    metadata:
+      labels:
+        app: payday-worker
+    spec:
+      containers:
+      - name: worker
+        image: {{ .Values.worker.image }}
+        env:
+        - name: DB_HOST
+          value: "payday-postgres-service"
+        - name: DB_PASSWORD
+          value: "vault_secret_pass"

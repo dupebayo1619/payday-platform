@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payday-postgres
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payday-postgres
+  template:
+    metadata:
+      labels:
+        app: payday-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: {{ .Values.postgresql.image }}
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "payday_ledger"
+        - name: POSTGRES_USER
+          value: "payday_admin"
+        - name: POSTGRES_PASSWORD
+          value: "vault_secret_pass"
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: payday-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payday-postgres-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: payday-postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: payday-postgres-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
