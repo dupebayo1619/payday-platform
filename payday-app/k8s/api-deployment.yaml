@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payday-api
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payday-api
+  template:
+    metadata:
+      labels:
+        app: payday-api
+    spec:
+      containers:
+      - name: api
+        image: dupebayo1619/payday-api:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DB_HOST
+          value: "postgres-service"
+        - name: DB_NAME
+          value: "payday_db"
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_PASSWORD
+          value: "vault_secret_pass"
+        - name: REDIS_HOST
+          value: "redis-service"

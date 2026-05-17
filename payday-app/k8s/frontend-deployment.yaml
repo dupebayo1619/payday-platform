@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payday-frontend
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payday-frontend
+  template:
+    metadata:
+      labels:
+        app: payday-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: dupebayo1619/payday-frontend:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
